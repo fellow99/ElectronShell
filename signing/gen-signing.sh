@@ -14,16 +14,16 @@
 
 set -euo pipefail
 
-DEVeCO_ROOT="${DEVECO_ROOT:-/d/oh-workspace/DevEco Studio}"
-SDK_LIB="${SDK_LIB:-${DEVeCO_ROOT}/sdk/default/openharmony/toolchains/lib}"
-KEYTOOL="${DEVeCO_ROOT}/jbr/bin/keytool.exe"
-JAVA="${DEVeCO_ROOT}/jbr/bin/java.exe"
+DEVECO_ROOT="${DEVECO_ROOT:-/d/oh-workspace/DevEco Studio}"
+SDK_LIB="${SDK_LIB:-${DEVECO_ROOT}/sdk/default/openharmony/toolchains/lib}"
+KEYTOOL="${DEVECO_ROOT}/jbr/bin/keytool.exe"
+JAVA="${DEVECO_ROOT}/jbr/bin/java.exe"
 SIGN_TOOL="${SDK_LIB}/hap-sign-tool.jar"
 
 BUNDLE_NAME="${1:-com.jkh.electronshell}"
 DEVICE_UDID="${2:-084FE48364AAFE770B83C793762F0B39DE5F7A63C51500C0BCF18908AFCDD08C}"
 
-STORE_PWD="Electron@2026"
+STORE_PWD="${SIGN_PWD:-Electron@2026}"
 OH_PWD="123456"
 KEY_ALIAS="electronshell-debug-key"
 SUBJECT="C=CN,O=OpenHarmony,OU=OpenHarmony Community,CN=ElectronShell Debug"

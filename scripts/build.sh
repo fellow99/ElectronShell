@@ -12,6 +12,11 @@
 # 因为 HarmonyOS 真机只接受华为 AGC 签发的 profile。
 #
 # 用法：bash scripts/build.sh [debug|release]
+#
+# 环境变量（可选，覆盖默认值）：
+#   DEVECO_ROOT  DevEco Studio 安装目录（含 jbr 与 sdk）
+#   HVIGORW      hvigorw 可执行文件路径
+#   SIGN_PWD     本地调试密钥口令（仅方式 2 使用）
 
 set -euo pipefail
 
@@ -29,7 +34,7 @@ NODE_HOME="${NODE_HOME:-${DEVECO_ROOT}/tools/node}"
 
 SIGN_DIR="$PROJECT_ROOT/signing"
 KEY_ALIAS="electronshell-debug-key"
-STORE_PWD="Electron@2026"
+STORE_PWD="${SIGN_PWD:-Electron@2026}"
 COMPATIBLE_VERSION=20
 
 OUT_DIR="$PROJECT_ROOT/electron/build/default/outputs/default"
@@ -40,7 +45,10 @@ export PATH="$NODE_HOME:/d/oh-workspace/command-line-tools/bin:$PATH"
 unset NODE_OPTIONS || true
 
 echo "==> [1/2] hvigor assembleHap ($BUILD_MODE)"
-cmd //c "$HVIGORW assembleHap --mode module -p product=default -p buildMode=$BUILD_MODE --no-daemon"
+# 先清掉旧产物，避免「上次遗留的 signed.hap」被误判为本次构建结果
+rm -f "$SIGNED_HAP" "$UNSIGNED_HAP"
+# 直接调用 .bat（Git Bash 会经 cmd 执行），路径含空格时也无需额外转义
+"$HVIGORW" assembleHap --mode module -p product=default -p buildMode="${BUILD_MODE}" --no-daemon
 
 if [ -f "$SIGNED_HAP" ]; then
   echo "==> [2/2] 已由 hvigor signingConfig 完成签名，跳过手动签名"
@@ -55,6 +63,18 @@ if [ ! -f "$UNSIGNED_HAP" ]; then
 fi
 
 echo "==> [2/2] hap-sign-tool sign-app（本地调试签名）"
+
+# 预检：缺依赖时给出明确指引，而不是抛 Java/Shell 原始错误
+for required in "$JAVA" "$SIGN_TOOL" \
+                "$SIGN_DIR/app-cert-chain.cer" "$SIGN_DIR/profile.p7b" "$SIGN_DIR/app-keystore.p12"; do
+  if [ ! -f "$required" ]; then
+    echo "ERROR: 缺少文件 $required" >&2
+    echo "       本地签名材料可执行 bash signing/gen-signing.sh 重新生成；" >&2
+    echo "       或在 DevEco Studio 中开启自动签名（推荐）。" >&2
+    exit 1
+  fi
+done
+
 "$JAVA" -jar "$SIGN_TOOL" sign-app -mode localSign \
   -keyAlias "$KEY_ALIAS" -keyPwd "$STORE_PWD" \
   -appCertFile "$SIGN_DIR/app-cert-chain.cer" \

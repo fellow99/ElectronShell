@@ -19,11 +19,22 @@ set -euo pipefail
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-SOURCE_ROOT="${1:-/d/pi-workspace/harmonypc-electron}"
-if [ "${SOURCE_ROOT}" = "--from" ]; then
-  SOURCE_ROOT="${2:-/d/pi-workspace/harmonypc-electron}"
+SOURCE_ROOT="/d/pi-workspace/harmonypc-electron"
+if [ "${1:-}" = "--from" ]; then
+  if [ -z "${2:-}" ]; then
+    echo "ERROR: --from 需要一个路径参数，例如 --from /d/pi-workspace/harmonypc-electron" >&2
+    exit 1
+  fi
+  SOURCE_ROOT="$2"
+elif [ -n "${1:-}" ]; then
+  SOURCE_ROOT="$1"
 fi
 SRC_HAP="${SOURCE_ROOT}/ohos_hap"
+
+if ! command -v python >/dev/null 2>&1; then
+  echo "ERROR: 需要 python 用于按 runtime-manifest.json 校验 MD5" >&2
+  exit 1
+fi
 
 if [ ! -d "${SRC_HAP}" ]; then
   echo "ERROR: 源工程不存在：${SRC_HAP}" >&2
@@ -32,6 +43,13 @@ if [ ! -d "${SRC_HAP}" ]; then
 fi
 
 echo "==> [1/3] 复制 Electron 原生库 (electron/libs)"
+for so in libelectron.so libadapter.so libffmpeg.so; do
+  if [ ! -f "${SRC_HAP}/electron/libs/arm64-v8a/${so}" ]; then
+    echo "ERROR: 源工程缺少 ${SRC_HAP}/electron/libs/arm64-v8a/${so}" >&2
+    echo "       请确认源工程已解压 Electron v37.2.3 发行产物" >&2
+    exit 1
+  fi
+done
 mkdir -p electron/libs/arm64-v8a
 cp -f "${SRC_HAP}/electron/libs/arm64-v8a/libelectron.so" electron/libs/arm64-v8a/
 cp -f "${SRC_HAP}/electron/libs/arm64-v8a/libadapter.so" electron/libs/arm64-v8a/

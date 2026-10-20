@@ -6,6 +6,8 @@
  *     本身不拦截空白区域的触摸（HitTestMode.Transparent），保证网页仍可正常交互；
  *   - 所有导航请求都交给 Electron 主进程处理（见 ElectronShellBridge），
  *     ArkTS 侧只负责「取输入、做规整、落本地存储、发请求」；
+ *   - 启动时的状态文件发布由 EntryAbility.onCreate 完成（早于内核启动），
+ *     本组件只负责界面状态；
  *   - 布局按 vp 宽度分为紧凑（手机竖屏）/ 常规（平板）/ 宽屏（2in1、TV）三档，
  *     并对 windowSizeChange 作出响应，因此横竖屏切换会自动重排。
  */
@@ -21,6 +23,7 @@ import { ElectronShellBridge } from '../service/ElectronShellBridge';
 const TAG: string = 'ShellOverlay';
 const DOMAIN: number = 0x0000;
 const INPUT_ID: string = 'shellUrlInput';
+const INPUT_WIDTH_FULL: string = '100%';
 
 @Component
 export struct ShellOverlay {
@@ -33,6 +36,7 @@ export struct ShellOverlay {
   private bridge: ElectronShellBridge = ElectronShellBridge.getInstance();
   private hostWindow: window.Window | undefined = undefined;
   private sizeListener: Callback<window.Size> | undefined = undefined;
+  private disposed: boolean = false;
 
   aboutToAppear(): void {
     const context: Context = getContext(this);
@@ -41,24 +45,27 @@ export struct ShellOverlay {
 
     const lastUrl: string = this.urlStore.getLastUrl();
     if (ShellUrlHelper.isRestorable(lastUrl)) {
-      // 本地有可用 URL：预填输入框并立即让浏览器组件加载
+      // 本地有可用 URL：预填输入框，导航由 EntryAbility 启动时已发布
       this.urlText = lastUrl;
-      this.bridge.publish(lastUrl);
     } else {
       // 本地无 URL（或上次保存的值已非法）：浏览器组件展示空页面，同时展开底部输入框
       this.editorVisible = true;
-      this.bridge.publish('');
     }
     this.attachSizeListener();
   }
 
   aboutToDisappear(): void {
+    this.disposed = true;
     this.detachSizeListener();
   }
 
   /** 监听窗口尺寸变化，驱动紧凑 / 常规 / 宽屏三档响应式布局 */
   private attachSizeListener(): void {
     window.getLastWindow(getContext(this)).then((win: window.Window) => {
+      if (this.disposed) {
+        // 组件已在 promise 兑现前销毁：不再注册监听，避免泄漏
+        return;
+      }
       this.hostWindow = win;
       this.applyWidth(win.getWindowProperties().windowRect.width);
       this.sizeListener = (size: window.Size): void => {
@@ -77,14 +84,16 @@ export struct ShellOverlay {
   }
 
   private detachSizeListener(): void {
-    if (this.hostWindow === undefined || this.sizeListener === undefined) {
+    if (this.sizeListener === undefined) {
       return;
     }
-    try {
-      this.hostWindow.off('windowSizeChange', this.sizeListener);
-    } catch (error) {
-      const err = error as BusinessError;
-      hilog.error(DOMAIN, TAG, 'unregister windowSizeChange failed, code=%{public}d', err.code);
+    if (this.hostWindow !== undefined) {
+      try {
+        this.hostWindow.off('windowSizeChange', this.sizeListener);
+      } catch (error) {
+        const err = error as BusinessError;
+        hilog.error(DOMAIN, TAG, 'unregister windowSizeChange failed, code=%{public}d', err.code);
+      }
     }
     this.sizeListener = undefined;
     this.hostWindow = undefined;
@@ -96,8 +105,8 @@ export struct ShellOverlay {
     }
     const widthVp: number = this.getUIContext().px2vp(widthPx);
     this.compact = widthVp < ShellConstants.BREAKPOINT_COMPACT;
-    if (widthVp < ShellConstants.BREAKPOINT_COMPACT) {
-      this.panelWidth = '92%';
+    if (this.compact) {
+      this.panelWidth = INPUT_WIDTH_FULL;
     } else if (widthVp < ShellConstants.BREAKPOINT_WIDE) {
       this.panelWidth = '68%';
     } else {
@@ -105,10 +114,25 @@ export struct ShellOverlay {
     }
   }
 
+  /**
+   * 让输入框获得焦点。
+   * defaultFocus 只在页面首次获焦时生效，动态展开的面板必须显式请求焦点。
+   */
+  private requestInputFocus(): void {
+    try {
+      this.getUIContext().getFocusController().requestFocus(INPUT_ID);
+    } catch (error) {
+      const err = error as BusinessError;
+      hilog.warn(DOMAIN, TAG, 'requestFocus failed, code=%{public}d', err.code);
+    }
+  }
+
   /** 展开输入面板 */
   private openEditor(): void {
     this.errorText = '';
     this.editorVisible = true;
+    // 面板为条件渲染，节点创建后再请求焦点
+    setTimeout(() => this.requestInputFocus(), 0);
   }
 
   /** 收起输入面板（不改变已保存的 URL） */
@@ -127,7 +151,10 @@ export struct ShellOverlay {
     this.errorText = '';
     this.urlText = url;
     this.urlStore.saveLastUrl(url);
-    this.bridge.publish(url);
+    if (!this.bridge.publish(url)) {
+      this.errorText = '无法通知浏览器内核，请重试';
+      return;
+    }
     this.editorVisible = false;
   }
 
@@ -186,7 +213,7 @@ export struct ShellOverlay {
             .caretColor('#FF2A55D6')
             .enterKeyType(EnterKeyType.Go)
             .maxLines(1)
-            .defaultFocus(true)
+            .maxLength(2048)
             .onChange((value: string) => {
               this.urlText = value;
               this.errorText = '';
@@ -236,8 +263,8 @@ export struct ShellOverlay {
     .width('100%')
     .justifyContent(FlexAlign.Center)
     .padding({
-      left: this.compact ? 8 : 16,
-      right: this.compact ? 8 : 16,
+      left: this.compact ? 4 : 16,
+      right: this.compact ? 4 : 16,
       bottom: this.compact ? 14 : 20
     })
     .transition(TransitionEffect.OPACITY.combine(TransitionEffect.translate({ y: 24 })))

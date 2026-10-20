@@ -10,8 +10,8 @@
  *   3. Electron 侧 --user-data-dir 已指向应用级 filesDir，
  *      两端对同一路径有共识（ApplicationContext.filesDir）。
  *
- * 时序保证：ArkTS 在浏览器组件启动前先写入状态文件，
- * 因此 Electron 主进程首次读到的就是「上次访问的 URL」。
+ * 写入采用「临时文件 + rename」的原子替换，保证消费端（300ms 轮询）
+ * 永远只会读到完整内容，不会读到被 TRUNC 后的 0 字节或半截 JSON。
  */
 
 import { fileIo } from '@kit.CoreFileKit';
@@ -66,7 +66,7 @@ export class ElectronShellBridge {
   }
 
   /**
-   * 发布一次导航请求：把 URL 与自增序号写入状态文件。
+   * 发布一次导航请求：把 URL 与自增序号原子写入状态文件。
    *
    * @param url 规整后的 URL，空字符串表示「回到空页面」
    * @returns true 表示写入成功
@@ -76,15 +76,36 @@ export class ElectronShellBridge {
       hilog.error(DOMAIN, TAG, 'publish skipped: bridge not initialized');
       return false;
     }
-    this.seq += 1;
-    const payload: ShellStatePayload = { url: url, seq: this.seq };
+    const nextSeq: number = this.seq + 1;
+    const payload: ShellStatePayload = { url: url, seq: nextSeq };
     const content: string = JSON.stringify(payload);
+    const tempPath: string = `${this.stateFilePath}.tmp`;
+    if (!this.writeFileAtomic(tempPath, content)) {
+      return false;
+    }
+    // 仅在落盘成功后提交序号，避免失败时空转
+    this.seq = nextSeq;
+    hilog.info(DOMAIN, TAG, 'published seq=%{public}d url=%{public}s', nextSeq, url);
+    return true;
+  }
+
+  /**
+   * 写临时文件并 rename 覆盖目标文件。
+   *
+   * @param tempPath 临时文件路径
+   * @param content 文件内容
+   * @returns true 表示成功
+   */
+  private writeFileAtomic(tempPath: string, content: string): boolean {
     let file: fileIo.File | undefined = undefined;
     try {
-      file = fileIo.openSync(this.stateFilePath,
+      file = fileIo.openSync(tempPath,
         fileIo.OpenMode.CREATE | fileIo.OpenMode.WRITE_ONLY | fileIo.OpenMode.TRUNC);
       fileIo.writeSync(file.fd, content);
-      hilog.info(DOMAIN, TAG, 'published seq=%{public}d url=%{public}s', this.seq, url);
+      fileIo.fsyncSync(file.fd);
+      fileIo.closeSync(file);
+      file = undefined;
+      fileIo.renameSync(tempPath, this.stateFilePath);
       return true;
     } catch (error) {
       const err = error as BusinessError;
