@@ -71,9 +71,9 @@ Electron: [ElectronShell] did-finish-load url=file:///data/storage/el1/bundle/el
 设备空闲后补测，命令序列：
 
 ```bash
-hdc shell aa start -a EntryAbility -b com.jkh.electronshell   # 应用已加载 threejs 首页
+hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell   # 应用已加载 threejs 首页
 # 点击左侧 examples（dumpLayout 定位 Text/link "examples" → click 98 212）
-hdc shell "uitest dumpLayout -b com.jkh.electronshell -p /data/local/tmp/l.json"
+hdc shell "uitest dumpLayout -b org.fellow99.ElectronShell -p /data/local/tmp/l.json"
 hdc shell "uitest uiInput click 98 212"
 # 在 examples 列表点击示例卡片（按文本 "keyframes" 定位 → click 270 458）
 ```
@@ -88,6 +88,13 @@ WebGL 场景完整渲染，右上角 `lil-gui` 控制面板可用，FPS 指示 `
 
 ---
 
+## 包名变更记录（2026-10-20）
+
+需求方要求将应用包名由 `com.jkh.electronshell` 变更为 `org.fellow99.ElectronShell`。受影响的
+源码/配置（`AppScope/app.json5`、4 个 `web_engine` 适配器、`shortcuts_config.json`）与本地签名材料
+（`signing/gen-signing.sh` 重新生成 `profile.p7b`）已同步；**真机安装需在 DevEco Studio 重新执行一次
+自动签名**（AGC profile 与包名绑定），本文后续命令中的包名已更新为新值。
+
 ## 代码评审修复后的回归验证（2026-10-20 第二轮）
 
 | 项 | 手段 | 结果 |
@@ -100,3 +107,28 @@ WebGL 场景完整渲染，右上角 `lil-gui` 控制面板可用，FPS 指示 `
 | 状态文件原子写（I-6） | 连续多次导航后读取状态文件 | ✅ JSON 完整、`seq` 单调 |
 | 导航回退策略（C-1/C-2） | threejs 首页 → examples → 示例页 连续跳转 | ✅ 无空页回退、无重复加载；示例页 60 FPS |
 | 单测 | `electron/src/test/ShellUrlHelper.test.ets` | ⚠️ 未执行（需 `hvigorw onDeviceTest` 与设备空闲） |
+
+---
+
+## 第三轮：包名迁移 + 权限精简后真机回归（2026-10-20）
+
+**包名**：`com.jkh.electronshell` → `org.fellow99.ElectronShell`（旧包已卸载）
+**签名**：DevEco 自动签名重新生成，`appIdentifier = 6918745460321209388`，`appProvisionType = debug`
+**权限**：`requestPermissions` 由 28 项裁剪至 22 项（移除 3 个目录权限、`FILE_ACCESS_PERSIST`、`READ_PASTEBOARD`、`WEB_NATIVE_MESSAGING`）
+
+| # | 验证项 | 手段 | 结果 |
+|---|--------|------|------|
+| 1 | 构建 | `bash scripts/build.sh` | ✅ BUILD SUCCESSFUL，产出 `electron-default-signed.hap`（213MB） |
+| 2 | 安装 | `hdc app install -r` | ✅ `install bundle successfully` |
+| 3 | 首次启动（无 URL） | 截图 `w1.jpeg` | ✅ 空页面（ElectronShell 水印）+ 底部面板展开 + 输入框聚焦（IME 可见） |
+| 4 | 输入 `www.baidu.com` → 前往 | 日志 + 截图 `w2.jpeg` | ✅ 规范化为 `https://www.baidu.com`；`published seq=2`；`did-finish-load`；面板收起、浮动按钮出现 |
+| 5 | 点击百度「新闻」 | 日志 + 截图 `w3.jpeg` | ✅ `did-finish-load url=https://news.baidu.com/`，同窗口跳转 |
+| 6 | 输入 `https://www.threejs.org` | 日志 | ✅ `published seq=3` → `did-finish-load url=https://threejs.org/` |
+| 7 | `examples` 列表 | 截图 `w5.jpeg` | ✅ 侧栏示例列表加载，选中态正常 |
+| 8 | 点击具体示例 | 截图 `w9.jpeg` | ✅ `three.js webgl - skinning and morphing` 正常渲染，左上 `FPS 59-61`，`lil-gui` 控制面板可交互 |
+| 9 | 重启后 URL 记忆 | `aa force-stop` + `aa start`，截图 `x2.jpeg` | ✅ 直接加载上次网址（threejs 首页），面板收起、浮动按钮就位 |
+| 10 | 应用名称 | 资源核对 | ✅ `base` / `zh_CN` / `en_US` 三份 `EntryAbility_label` 均为 `ElectronShell`；`AppScope` 的 `app_name` 为 `ElectronShell`；编译资源表无 `Deepseek` |
+| 11 | 权限裁剪后主链路 | 步骤 3~9 | ✅ 启动、渲染、导航、输入、持久化均不受影响 |
+| 12 | 网页内粘贴（`READ_PASTEBOARD` 已移除） | — | ⚠️ 未实测；按设计预期不可用（已知限制，见 `plan.md` §8.1） |
+
+**结论**：包名迁移与权限精简后，全部 P0 用例在新包名下复核通过；应用名称与图标正确；无遗留阻塞项。

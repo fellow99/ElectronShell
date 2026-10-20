@@ -47,7 +47,7 @@
 
 ## 第六条：安全与凭据
 
-1. **不引入网络/存储以外的越权诉求**：权限声明沿用上游清单，新增权限必须有 `reason` 与 `usedScene`。
+1. **最小必要权限**：权限清单在上游基础上按需裁剪，保留项必须说明用途；新增权限必须有 `reason` 与 `usedScene`；裁剪与保留的判定记录在 `specs/001-electron-shell/plan.md` §8.1。
 2. **调试签名与正式签名分离**：仓库内只允许存在**调试**签名材料（设备绑定、自签名），且必须在 `signing/README.txt` 说明其用途与限制；正式发布必须使用 DevEco 自动签名（华为 AGC profile），不得把密文口令写入文档。
 3. **内核侧最小权限**：`BrowserWindow` 使用 `nodeIntegration: false`、`contextIsolation: true`，网页脚本不得直接访问 Node 能力。
    - 位置：`web_engine/.../app/main.js`

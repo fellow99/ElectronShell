@@ -150,21 +150,21 @@
 ### TC-001-040（P0）确认的 URL 写入本地存储
 
 - **步骤**：确认 `https://www.threejs.org` 后执行
-  `hdc shell cat /data/app/el2/100/base/com.jkh.electronshell/haps/electron/preferences/electron_shell_store`
+  `hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/haps/electron/preferences/electron_shell_store`
 - **预期**：文件内容包含 `<string key="last_url">https://www.threejs.org</string>`
 - **对应需求**：FR-001-040
 - **实测**：通过
 
 ### TC-001-041（P0）重启后恢复该 URL
 
-- **步骤**：`hdc shell aa force-stop com.jkh.electronshell` → `aa start -a EntryAbility -b com.jkh.electronshell`
+- **步骤**：`hdc shell aa force-stop org.fellow99.ElectronShell` → `aa start -a EntryAbility -b org.fellow99.ElectronShell`
 - **预期**：启动后直接加载 `https://www.threejs.org`，面板收起
 - **对应需求**：FR-001-011 / FR-001-040
 
 ### TC-001-042（P1）状态文件与偏好存储双写一致
 
 - **步骤**：确认 URL 后执行
-  `hdc shell cat /data/app/el2/100/base/com.jkh.electronshell/files/electron-shell-state.json`
+  `hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json`
 - **预期**：内容形如 `{"url":"https://www.threejs.org","seq":N}`，`url` 与 preferences 中一致
 - **对应需求**：FR-001-025 / FR-001-040
 - **实测**：通过

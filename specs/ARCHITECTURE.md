@@ -45,20 +45,20 @@
                 │ window/SystemBar API  │ 触摸事件
                 v                       v
 ┌───────────────────────────────────────────────────────────────┐
-│ 应用主进程（com.jkh.electronshell）                            │
+│ 应用主进程（org.fellow99.ElectronShell）                            │
 │  ArkTS 运行时 ── WebAbility ── LocalStorage（xcomponentId 等）  │
 │      │                                                        │
 │      │ ContentSlot(NodeContent) / XComponent(SURFACE)          │
 │      v                                                        │
 │  Electron 主进程（同进程内嵌 chromium 子进程）                  │
 │   ├─ BrowserWindow(frame:false)                                │
-│   ├─ :Renderer   ← 网页渲染（进程名 com.jkh.electronshell:Renderer）│
+│   ├─ :Renderer   ← 网页渲染（进程名 org.fellow99.ElectronShell:Renderer）│
 │   ├─ :GPU        ← 合成/光栅                                    │
 │   └─ :NetworkService ← 网络                                     │
 └───────────────────────────────────────────────────────────────┘
 ```
 
-真机观察到的子进程（`ps -A`）：`com.jkh.electronshell`（主）、`:Renderer`、`:GPU`、`:NetworkService`、`:browser`。
+真机观察到的子进程（`ps -A`）：`org.fellow99.ElectronShell`（主）、`:Renderer`、`:GPU`、`:NetworkService`、`:browser`。
 
 ---
 
@@ -132,21 +132,21 @@ Electron（轮询 300ms）
 | 未签名 HAP | `electron/build/default/outputs/default/electron-default-unsigned.hap` | ≈202MB |
 | 已签名 HAP | `electron/build/default/outputs/default/electron-default-signed.hap` | ≈203MB |
 
-> HAP 体积主要来自 `libelectron.so`（181MB）。安装后应用数据目录 `/data/app/el2/100/base/com.jkh.electronshell` 约 400MB（含 Chromium 缓存）。
+> HAP 体积主要来自 `libelectron.so`（181MB）。安装后应用数据目录 `/data/app/el2/100/base/org.fellow99.ElectronShell` 约 400MB（含 Chromium 缓存）。
 
 ### 5.2 安装与启动
 
 ```bash
 hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap
-hdc shell aa start -a EntryAbility -b com.jkh.electronshell
+hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
 ```
 
 ### 5.3 运行期关键路径（用于排障）
 
 | 路径 | 内容 |
 |------|------|
-| `/data/app/el2/100/base/com.jkh.electronshell/files/electron-shell-state.json` | ArkTS → Electron 的导航状态（`url`/`seq`） |
-| `/data/app/el2/100/base/com.jkh.electronshell/haps/electron/preferences/electron_shell_store` | 偏好存储（`last_url`） |
+| `/data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json` | ArkTS → Electron 的导航状态（`url`/`seq`） |
+| `/data/app/el2/100/base/org.fellow99.ElectronShell/haps/electron/preferences/electron_shell_store` | 偏好存储（`last_url`） |
 | `/data/storage/el1/bundle/electron/resources/resfile/resources/app/` | 随包的 Electron 应用 |
 | `/data/storage/el1/bundle/libs/arm64/` | 解压出的 `.so` |
 

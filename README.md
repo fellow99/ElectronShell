@@ -118,7 +118,7 @@ bash scripts/build.sh          # 产出 electron-default-signed.hap
 
 ```bash
 hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap
-hdc shell aa start -a EntryAbility -b com.jkh.electronshell
+hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
 ```
 
 首次在 DevEco Studio 中打开工程时，建议执行一次自动签名：
@@ -147,7 +147,8 @@ hdc shell aa start -a EntryAbility -b com.jkh.electronshell
 
 ```
 ElectronShell/
-├── AppScope/                 # 应用级配置（bundleName=com.jkh.electronshell）
+├── AppScope/                 # 应用级配置（bundleName=org.fellow99.ElectronShell）
+│   └── resources/base/media/app_icon.png   # ★ 应用图标（1024×1024 PNG）
 ├── electron/                 # 主 entry HAP：应用入口、页面、壳界面、持久化、内核通道
 │   └── src/main/ets/
 │       ├── common/           # ShellConstants、ShellUrlHelper（纯函数）
@@ -179,15 +180,15 @@ ElectronShell/
 ```bash
 # 安装 / 启动 / 停止
 hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap
-hdc shell aa start -a EntryAbility -b com.jkh.electronshell
-hdc shell aa force-stop com.jkh.electronshell
+hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
+hdc shell aa force-stop org.fellow99.ElectronShell
 
 # 截图
 hdc shell snapshot_display -f /data/local/tmp/s.jpeg
 MSYS_NO_PATHCONV=1 hdc file recv /data/local/tmp/s.jpeg ./s.jpeg
 
 # UI 树 / 点击 / 输入
-hdc shell "uitest dumpLayout -b com.jkh.electronshell -p /data/local/tmp/l.json"
+hdc shell "uitest dumpLayout -b org.fellow99.ElectronShell -p /data/local/tmp/l.json"
 hdc shell "uitest uiInput click <x> <y>"
 hdc shell "uitest uiInput text https://www.baidu.com"
 hdc shell "uitest uiInput keyEvent 2055"     # 删除一个字符
@@ -196,8 +197,8 @@ hdc shell "uitest uiInput keyEvent 2055"     # 删除一个字符
 hdc shell hilog -x | grep -E "ElectronShellBridge|ShellOverlay|ElectronShell\]"
 
 # 查看持久化数据
-hdc shell cat /data/app/el2/100/base/com.jkh.electronshell/files/electron-shell-state.json
-hdc shell cat /data/app/el2/100/base/com.jkh.electronshell/haps/electron/preferences/electron_shell_store
+hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json
+hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/haps/electron/preferences/electron_shell_store
 ```
 
 ### 验证清单（人工）
@@ -247,6 +248,9 @@ hdc shell cat /data/app/el2/100/base/com.jkh.electronshell/haps/electron/prefere
 | 导航延迟 | 确认地址到内核开始加载最多约 300ms | 内核轮询状态文件的周期 |
 | 单窗口 | 不支持多标签、弹窗浏览 | `setWindowOpenHandler` 全部收敛 |
 | 仅 http/https | 输入框不能打开 `file://`、`chrome://` | 输入校验白名单 |
+| 网页内不能粘贴 | 未申请 `READ_PASTEBOARD`（受限权限），网页内容里的 Ctrl+V / 右键粘贴无效 | URL 输入框（ArkUI）粘贴不受影响；需要网页粘贴时恢复该权限即可 |
+| 网页不能直写下载/文档/桌面目录 | 已裁剪三个目录权限 | 需要另存到这些目录时恢复对应权限 |
+| 不支持扩展 / native messaging | 已裁剪 `WEB_NATIVE_MESSAGING` | 本工程不加载扩展 |
 | 平板非 PC 模式 | 可能顶部留白 | `WebAbility` 会把系统状态栏高度写入 LocalStorage 用于内缩原生窗口 |
 | HAP 体积 | 约 203MB | 主要来自 `libelectron.so`（181MB） |
 

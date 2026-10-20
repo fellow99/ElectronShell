@@ -260,6 +260,31 @@ last_url: string  // 最后一次确认的 URL
 
 ---
 
+## 8.1 权限清单与裁剪记录
+
+`web_engine/src/main/module.json5` 的权限按**最小必要**原则裁剪，共移除 6 项上游权限：
+
+| 移除的权限 | 等级 | 移除理由 | 功能影响 |
+|-----------|------|---------|---------|
+| `ohos.permission.READ_WRITE_DOCUMENTS_DIRECTORY` | user_grant / normal | 浏览器壳不做文档另存/目录浏览 | 网页无法直接写入「文档」目录 |
+| `ohos.permission.READ_WRITE_DESKTOP_DIRECTORY` | user_grant / **system_basic** | 同上，且属受限权限 | 网页无法直接写入「桌面」目录 |
+| `ohos.permission.READ_WRITE_DOWNLOAD_DIRECTORY` | user_grant / normal | 同上 | 网页无法直接写入「下载」目录 |
+| `ohos.permission.FILE_ACCESS_PERSIST` | system_grant / normal | 仅为持久化文件选择器 URI 授权 | 文件选择器选择的 URI 重启后不再自动授权 |
+| `ohos.permission.WEB_NATIVE_MESSAGING` | system_grant / **system_basic** | 未加载任何 Electron/Chrome 扩展 | `NativeMessagingAdapter` 通道不可用 |
+| `ohos.permission.READ_PASTEBOARD` | user_grant / **system_basic** | 收敛受限权限；URL 输入框是 ArkUI 组件，粘贴由系统框架处理，不依赖本权限 | **网页内容内无法粘贴**（Ctrl+V / 右键粘贴）；写入剪贴板（复制）仍正常 |
+
+配套代码清理：
+
+- `PermissionManagerAdapter.needPermissions` 移除 `directory_download` / `directory_desktop` / `directory_document` / `pasteboard` 四个映射；原生侧再请求这些类型时走既有的 `unsupported permission` 分支并返回失败，不抛异常。
+- `PermissionManagerAdapter.initPermissions()` 增加「无待恢复 URI 时短路」，避免调用依赖 `FILE_ACCESS_PERSIST` 的 `fileShare.activatePermission`。
+- 删除 `openPermissionConfirm` 的 `pasteboard` 分支与 `openPasteboardPermissionConfirm()` 死代码，避免把用户引导到并不存在的剪贴板开关。
+
+**保留的关键受限权限**：`ohos.permission.kernel.ALLOW_WRITABLE_CODE_MEMORY` 必须保留——Electron 内置的 V8 启用 JIT（启动参数无 `--jitless`），需要在运行时申请可写且可执行的内存页，鸿蒙默认禁止；移除后表现为启动阶段白屏/崩溃，且不会在 Electron 日志里给出权限名称（由系统在 mmap 阶段拒绝）。
+
+裁剪后剩余：`requestPermissions` 22 项 + `definePermissions` 2 项。
+
+---
+
 ## 9. 已知风险（评审登记，暂不修复）
 
 | 编号 | 风险 | 影响 | 处置 |
