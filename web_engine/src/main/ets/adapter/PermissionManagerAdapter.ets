@@ -52,20 +52,8 @@ export class PermissionManagerAdapter extends BaseAdapter {
     ['screenshot', [
       'ohos.permission.CUSTOM_SCREEN_CAPTURE',
     ]],
-    ['pasteboard', [
-      'ohos.permission.READ_PASTEBOARD',
-    ]],
     ['bluetooth', [
       'ohos.permission.ACCESS_BLUETOOTH',
-    ]],
-    ['directory_download', [
-      'ohos.permission.READ_WRITE_DOWNLOAD_DIRECTORY',
-    ]],
-    ['directory_desktop', [
-      'ohos.permission.READ_WRITE_DESKTOP_DIRECTORY',
-    ]],
-    ['directory_document', [
-      'ohos.permission.READ_WRITE_DOCUMENTS_DIRECTORY',
     ]],
     ['screen_capture', [
       'ohos.permission.CUSTOM_SCREEN_CAPTURE',
@@ -79,7 +67,7 @@ export class PermissionManagerAdapter extends BaseAdapter {
   private ctxAdapter: ContextAdapter;
   private isInitialized: boolean = false;
   private appLabelId: number = 0;
-  private bundleName: string = 'com.jkh.electronshell';
+  private bundleName: string = 'org.fellow99.ElectronShell';
   private bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION |
                         bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA;
 
@@ -173,11 +161,18 @@ export class PermissionManagerAdapter extends BaseAdapter {
     if (this.isInitialized) {
       return;
     }
-    this.activateFileAccessPersist(this.getUris(), (code) => {
+    // 本工程未申请 ohos.permission.FILE_ACCESS_PERSIST（浏览器壳不需要持久化文件 URI 授权），
+    // 因此没有待恢复的 URI 时直接完成初始化，避免无意义的激活调用与错误日志。
+    const uris: string[] = this.getUris();
+    if (uris.length === 0) {
+      this.isInitialized = true;
+      return;
+    }
+    this.activateFileAccessPersist(uris, (code) => {
       if (code === ACTIVATE_SUCCESS) {
         this.isInitialized = true;
       } else {
-        LogUtil.error(TAG, 'No URI required for activation or activation failed');
+        LogUtil.error(TAG, 'activate file access persist failed, code:' + code);
       }
     });
   }
@@ -284,9 +279,6 @@ export class PermissionManagerAdapter extends BaseAdapter {
       cancel: ''
     };
     switch(type) {
-      case "pasteboard":
-        this.openPasteboardPermissionConfirm(activeContext, confirmParams);
-        break;
       case "screenshot":
         this.openScreenshotPermissionConfirm(activeContext, confirmParams);
         break;
@@ -298,15 +290,6 @@ export class PermissionManagerAdapter extends BaseAdapter {
       return;
     }
     this.openPermissionConfirmDialog(activeContext, confirmParams, callback);
-  }
-
-  private openPasteboardPermissionConfirm(activeContext: Context, pasteboardConfirmParams: ConfirmParams) {
-    pasteboardConfirmParams.title = activeContext.resourceManager.getStringSync($r("app.string.pasteBoard_dialog_title").id);
-    pasteboardConfirmParams.content = activeContext.resourceManager.getStringSync($r("app.string.pasteBoard_dialog_content").id);
-    pasteboardConfirmParams.label = activeContext.resourceManager.getStringSync(this.appLabelId);
-    pasteboardConfirmParams.content = pasteboardConfirmParams.content.replace("label", pasteboardConfirmParams.label);
-    pasteboardConfirmParams.confirm = activeContext.resourceManager.getStringSync($r("app.string.dialog_confirm_button").id);
-    pasteboardConfirmParams.cancel = activeContext.resourceManager.getStringSync($r("app.string.dialog_cancel_button").id);
   }
 
   private openScreenshotPermissionConfirm(activeContext: Context, pasteboardConfirmParams: ConfirmParams) {

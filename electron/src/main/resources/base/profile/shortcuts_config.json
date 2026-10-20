@@ -5,7 +5,7 @@
       "label": "$string:OpenNewWindow_label",
       "wants": [
         {
-          "bundleName": "com.jkh.electronshell",
+          "bundleName": "org.fellow99.ElectronShell",
           "moduleName": "electron",
           "abilityName": "EntryAbility",
           "parameters": {

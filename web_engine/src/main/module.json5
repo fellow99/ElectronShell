@@ -31,9 +31,6 @@
         "name": "ohos.permission.ACCESS_BIOMETRIC"
       },
       {
-        "name": "ohos.permission.FILE_ACCESS_PERSIST"
-      },
-      {
         "name": "ohos.permission.PRIVACY_WINDOW"
       },
       {
@@ -62,49 +59,6 @@
             "EntryAbility"
           ],
           "when": "inuse"
-        }
-      },
-      {
-        "name": "ohos.permission.WEB_NATIVE_MESSAGING"
-      },
-      {
-        "name": "ohos.permission.READ_PASTEBOARD",
-        "reason": "$string:access_pasteboard",
-        "usedScene": {
-          "abilities": [
-            "FormAbility"
-          ],
-          "when":"always"
-        }
-      },
-      {
-        "name": "ohos.permission.READ_WRITE_DOWNLOAD_DIRECTORY",
-        "reason": "$string:download_dir",
-        "usedScene": {
-          "abilities": [
-            "FormAbility"
-          ],
-          "when":"always"
-        }
-      },
-      {
-        "name": "ohos.permission.READ_WRITE_DOCUMENTS_DIRECTORY",
-        "reason": "$string:documents_dir",
-        "usedScene": {
-          "abilities": [
-            "FormAbility"
-          ],
-          "when":"always"
-        }
-      },
-      {
-        "name": "ohos.permission.READ_WRITE_DESKTOP_DIRECTORY",
-        "reason": "$string:desktop_dir",
-        "usedScene": {
-          "abilities": [
-            "FormAbility"
-          ],
-          "when":"always"
         }
       },
       {

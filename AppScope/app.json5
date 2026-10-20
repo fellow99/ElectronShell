@@ -1,7 +1,7 @@
 {
   "app": {
-    "bundleName": "com.jkh.electronshell",
-    "vendor": "jkh",
+    "bundleName": "org.fellow99.ElectronShell",
+    "vendor": "fellow99",
     "versionCode": 1000000,
     "versionName": "1.0.0",
     "icon": "$media:app_icon",

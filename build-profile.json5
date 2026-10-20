@@ -30,11 +30,11 @@
         "material": {
           "certpath": "C:\\Users\\Administrator\\.ohos\\config\\default_ElectronShell_hyCSjw21qm1KI4H9ZMHNq4nao6qPVqytg9exndHyVXs=.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "00000019C32E5806DBF1ED71104C386C39C9A220D9A300092DC92EF8BB082A036ACF6B673AD990E523",
+          "keyPassword": "0000001B210E4BF939C44873FAA13BD1B492FCAFD1C07A9955048F646C41351FEE397C55D6E78F4A3AD923",
           "profile": "C:\\Users\\Administrator\\.ohos\\config\\default_ElectronShell_hyCSjw21qm1KI4H9ZMHNq4nao6qPVqytg9exndHyVXs=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "C:\\Users\\Administrator\\.ohos\\config\\default_ElectronShell_hyCSjw21qm1KI4H9ZMHNq4nao6qPVqytg9exndHyVXs=.p12",
-          "storePassword": "00000019215BCCB61E092F3B91A84512B5841637156D03EF8C4C017EBB74725AA501073BC424BF43B3"
+          "storePassword": "0000001B89D4B57D2164CF1D8942CFB602A7C287324EFD8ED953BA325F381E06FFD6142AB00370BAAB896A"
         }
       }
     ]

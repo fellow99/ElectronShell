@@ -20,7 +20,7 @@ KEYTOOL="${DEVECO_ROOT}/jbr/bin/keytool.exe"
 JAVA="${DEVECO_ROOT}/jbr/bin/java.exe"
 SIGN_TOOL="${SDK_LIB}/hap-sign-tool.jar"
 
-BUNDLE_NAME="${1:-com.jkh.electronshell}"
+BUNDLE_NAME="${1:-org.fellow99.ElectronShell}"
 DEVICE_UDID="${2:-084FE48364AAFE770B83C793762F0B39DE5F7A63C51500C0BCF18908AFCDD08C}"
 
 STORE_PWD="${SIGN_PWD:-Electron@2026}"
