@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ElectronShell</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #F7F8FA;
+      color: #9AA0A6;
+      font-family: -apple-system, BlinkMacSystemFont, 'HarmonyOS Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .stage {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mark {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #DCE3EC 0%, #C7D1DE 100%);
+      opacity: 0.85;
+    }
+    .hint {
+      font-size: 13px;
+      letter-spacing: 0.4px;
+      color: #B0B6BD;
+    }
+    @media (prefers-color-scheme: dark) {
+      html, body { background: #16181B; color: #6C7278; }
+      .mark { background: linear-gradient(135deg, #2A2E34 0%, #23262B 100%); }
+      .hint { color: #5A6067; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="mark"></div>
+    <div class="hint">ElectronShell</div>
+  </div>
+</body>
+</html>

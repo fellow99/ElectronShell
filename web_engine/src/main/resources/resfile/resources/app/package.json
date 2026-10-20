@@ -1,0 +1,8 @@
+{
+  "name": "electron-shell",
+  "version": "1.0.0",
+  "description": "HarmonyOS Electron browser shell",
+  "main": "main.js",
+  "private": true,
+  "license": "Apache-2.0"
+}
