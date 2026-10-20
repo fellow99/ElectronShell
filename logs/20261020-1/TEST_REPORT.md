@@ -22,7 +22,7 @@
 | 11 | TC-001-025 「✕」收起面板 | P1 | 部分验证 | 点击「✕」后面板收起（多次操作中观察到） |
 | 12 | TC-001-030 百度新闻链接同窗口跳转 | P0 | ✅ 通过 | `s4.jpeg`：百度新闻首页；再点新闻条目进入 `s5.jpeg` 正文页 |
 | 13 | TC-001-031 threejs.org 加载 | P1 | ✅ 通过 | `t3.jpeg`：Three.js 官网作品墙；`dumpLayout` 标题 `Three.js – JavaScript 3D Library` |
-| 14 | TC-001-032 threejs examples → 具体示例 | P0 | ✅ 通过（补测） | `v2.jpeg`：examples 列表页；`v4.jpeg`：示例页 WebGL 渲染，右上角 `60 FPS (44-60)` |
+| 14 | TC-001-032 threejs `examples` → 第 5 个示例 | P0 | ✅ 通过 | `v2.jpeg`/`w5.jpeg`：examples 列表页；`v4.jpeg`/`w9.jpeg`：第 5 个示例页 WebGL 渲染，`FPS 59-61` |
 | 15 | TC-001-033 `target=_blank` 收敛当前窗口 | P1 | 未执行（代码已实现） | 代码评审覆盖 |
 | 16 | TC-001-034 非 http/https 交系统处理 | P2 | 未执行（代码已实现） | 代码评审覆盖 |
 | 17 | TC-001-035 导航失败回退空页面 | P1 | ✅ 通过（间接） | 非法 URL 时 `hilog` 出现 `load url …` 后紧跟 `did-finish-load … blank.html` |
@@ -66,7 +66,7 @@ Electron: [ElectronShell] did-finish-load url=file:///data/storage/el1/bundle/el
 | BUG-004 | 首次构建时 `assemble-resources` 步骤缺失导致 `electron/libs` 为空则无法打包 | 一般 | 新增 `scripts/assemble-resources.sh` 并在 README 中说明 |
 | BUG-005 | 使用 OpenHarmony SDK 编译时报 `@kit.*` 缺失、`phone` 设备类型不支持、`DISTRIBUTED_DATASYNC` 缺 `reason` | 一般（环境） | 切 HarmonyOS SDK；`phone`→`default`；补 `reason`/`usedScene` |
 
-### 补测记录（原阻塞项 TC-001-032，已通过）
+### 补测记录（TC-001-032：`examples` → 第 5 个示例，已通过）
 
 设备空闲后补测，命令序列：
 
@@ -125,7 +125,7 @@ WebGL 场景完整渲染，右上角 `lil-gui` 控制面板可用，FPS 指示 `
 | 5 | 点击百度「新闻」 | 日志 + 截图 `w3.jpeg` | ✅ `did-finish-load url=https://news.baidu.com/`，同窗口跳转 |
 | 6 | 输入 `https://www.threejs.org` | 日志 | ✅ `published seq=3` → `did-finish-load url=https://threejs.org/` |
 | 7 | `examples` 列表 | 截图 `w5.jpeg` | ✅ 侧栏示例列表加载，选中态正常 |
-| 8 | 点击具体示例 | 截图 `w9.jpeg` | ✅ `three.js webgl - skinning and morphing` 正常渲染，左上 `FPS 59-61`，`lil-gui` 控制面板可交互 |
+| 8 | `examples` → 第 5 个示例（`animation / skinning / morph`） | 截图 `w5.jpeg` / `w9.jpeg` | ✅ `three.js webgl - skinning and morphing` 正常渲染，左上 `FPS 59-61`，`lil-gui` 控制面板可交互 |
 | 9 | 重启后 URL 记忆 | `aa force-stop` + `aa start`，截图 `x2.jpeg` | ✅ 直接加载上次网址（threejs 首页），面板收起、浮动按钮就位 |
 | 10 | 应用名称 | 资源核对 | ✅ `base` / `zh_CN` / `en_US` 三份 `EntryAbility_label` 均为 `ElectronShell`；`AppScope` 的 `app_name` 为 `ElectronShell`；编译资源表无 `Deepseek` |
 | 11 | 权限裁剪后主链路 | 步骤 3~9 | ✅ 启动、渲染、导航、输入、持久化均不受影响 |

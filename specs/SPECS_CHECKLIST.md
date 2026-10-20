@@ -30,7 +30,7 @@
 | M-01 | 功能规格 | [001-electron-shell/spec.md](./001-electron-shell/spec.md) | ✅ 完成 | 5 个用户故事、24 条 FR、7 个验收场景 |
 | M-02 | 技术方案 | [001-electron-shell/plan.md](./001-electron-shell/plan.md) | ✅ 完成 | 技术上下文、5 个关键决策、数据模型、接口契约 |
 | M-03 | 任务清单 | [001-electron-shell/tasks.md](./001-electron-shell/tasks.md) | ✅ 完成 | 4 个阶段 34 个任务 + 5 个里程碑 |
-| M-04 | 测试用例 | [001-electron-shell/test-cases.md](./001-electron-shell/test-cases.md) | ✅ 完成 | 21 条用例（P0×9 / P1×9 / P2×3），含执行状态 |
+| M-04 | 测试用例 | [001-electron-shell/test-cases.md](./001-electron-shell/test-cases.md) | ✅ 完成 | 25 条用例（P0×11 / P1×10 / P2×4），含执行状态 |
 
 ---
 
@@ -48,7 +48,7 @@
 |---|------|------|------|------|
 | L-01 | 开发日志与自查清单 | [../logs/20261020-1/DEV_CHECKLIST.md](../logs/20261020-1/DEV_CHECKLIST.md) | ✅ 完成 | 环境、13 项自查、编译警告说明 |
 | L-02 | 代码评审报告 | [../logs/20261020-1/REVIEW_REPORT.md](../logs/20261020-1/REVIEW_REPORT.md) | ✅ 完成 | Critical 2 / Important 12 / Minor 13 的核对与处置 |
-| L-03 | 测试清单与报告 | [../logs/20261020-1/TEST_REPORT.md](../logs/20261020-1/TEST_REPORT.md) | ✅ 完成 | 21 条用例执行记录、补测记录、回归验证 |
+| L-03 | 测试清单与报告 | [../logs/20261020-1/TEST_REPORT.md](../logs/20261020-1/TEST_REPORT.md) | ✅ 完成 | 25 条用例执行记录、补测记录、回归验证 |
 
 ---
 
@@ -74,7 +74,7 @@
 | 是否分析各模块源码 | ✅ `web_engine`（126 个 ets）、`electron`（24 个 ets）、Electron 主进程均有分析记录 |
 | 是否记录页面/路由清单 | ✅ `STRUCTURE.md` 第 3 节 |
 | 是否逐模块输出规格 | ✅ 1 个功能模块 |
-| 是否输出测试用例 | ✅ 21 条，含执行状态 |
+| 是否输出测试用例 | ✅ 25 条（P0×11 / P1×10 / P2×4），含执行状态 |
 | 是否做代码评审 | ✅ `logs/20261020-1/REVIEW_REPORT.md` |
 | 是否真机验证 | ✅ 全部 P0 用例通过（`logs/20261020-1/TEST_REPORT.md`） |
 

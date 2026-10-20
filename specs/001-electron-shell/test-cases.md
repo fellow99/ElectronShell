@@ -100,29 +100,59 @@
 
 ## 4. 内核导航
 
-### TC-001-030（P0）页内链接在同一窗口跳转（百度新闻）
+### TC-001-030（P0）测试站点 1：百度首页 → 点击「新闻」链接
 
-- **前置**：已加载 `https://www.baidu.com`
-- **步骤**：点击页面顶部「新闻」链接
-- **预期**：当前浏览区域切换为百度新闻首页；无第二个系统窗口出现；浮动按钮仍可用
-- **对应需求**：FR-001-030
-
-### TC-001-031（P1）threejs.org 加载
-
-- **步骤**：输入 `https://www.threejs.org` 并确认
-- **预期**：浏览区域加载 Three.js 官网（首屏为作品墙）；`hilog` 出现 `did-finish-load`
-- **备注**：真机实测该站点首字节较慢（约 10~20s），属站点网络问题，非应用缺陷
-- **对应需求**：FR-001-030
-
-### TC-001-032（P0）threejs examples 列表 → 具体示例
-
-- **前置**：已加载 `https://www.threejs.org`
+- **测试站点**：`https://www.baidu.com`
+- **前置**：应用已安装并启动；URL 输入面板可用
 - **步骤**：
-  1. 点击左侧导航 `examples`
-  2. 在示例列表中点击任意一个示例（如 `webgl_animation_keyframes`）
-- **预期**：当前浏览区域分别跳转到 examples 列表页与示例页；示例页可交互（Canvas 渲染、鼠标/触摸事件生效）
+  1. 点左下角 **URL** 浮动按钮唤出输入面板
+  2. 输入 `www.baidu.com`，点「前往」（输入会被规整为 `https://www.baidu.com`）
+  3. 待百度首页渲染完成后，点击页面**顶部导航栏**中的「新闻」链接
+- **预期**：
+  1. 首页加载完成：`hilog` 出现 `published seq=N url=https://www.baidu.com` 与
+     `did-finish-load url=https://www.baidu.com/`；输入面板收起，浮动按钮重新出现
+  2. 点击「新闻」后当前浏览区域切换为**百度新闻首页**：
+     `did-finish-load url=https://news.baidu.com/`
+  3. 全程**不出现第二个系统窗口**；浮动按钮仍可用；页面可滚动、可点击
 - **对应需求**：FR-001-030
-- **执行状态**：✅ 通过（2026-10-20 补测）。`examples` 列表正常加载；点击示例后进入 `three.js webgl - animation - …` 页面，WebGL 场景渲染正常，右上角 FPS 显示 60 FPS
+- **执行状态**：✅ 通过（`com.jkh.electronshell` 与 `org.fellow99.ElectronShell` 两轮均通过；
+  证据 `w2.jpeg` 百度首页、`w3.jpeg` 百度新闻）
+
+### TC-001-031（P1）测试站点 2：threejs.org 首页加载
+
+- **测试站点**：`https://www.threejs.org`
+- **步骤**：唤出输入面板 → 输入 `https://www.threejs.org` → 点「前往」
+- **预期**：浏览区域加载 Three.js 官网首页（左侧 Learn/Tools/Community 导航 + 右侧作品墙）；
+  `hilog` 出现 `did-finish-load url=https://threejs.org/`
+- **备注**：该站点首字节较慢（实测约 10~20s），属站点网络状况，非应用缺陷；
+  等待期间应保持上一页面或空页面，不得出现错误页
+- **对应需求**：FR-001-030
+- **执行状态**：✅ 通过（`published seq=3` → `did-finish-load url=https://threejs.org/`）
+
+### TC-001-032（P0）测试站点 2：threejs `examples` → 第 5 个示例
+
+- **测试站点**：`https://www.threejs.org`
+- **前置**：已完成 TC-001-031，当前停留在 Three.js 官网首页
+- **步骤**：
+  1. 点击左侧 **Learn** 分组下的 `examples` 链接
+  2. 在 `examples` 页面左侧示例列表中，点击**第 5 个**示例：
+     `animation / skinning / morph`
+     （列表顺序：① animation / keyframes ② animation / skinning / blending
+     ③ animation / skinning / additive / blending ④ animation / skinning / ik ⑤ animation / skinning / morph）
+- **预期**：
+  1. `examples` 列表页加载成功：左侧 `webgl` 分组 + 缩略图网格，被选项有蓝色高亮边框
+  2. 点击第 5 个示例后，主区域加载 `three.js webgl - skinning and morphing`
+     （页头可见标题与模型署名 `Model by Tomás Laulhé …`）
+  3. **WebGL 场景正常渲染**：黄黑配色机器人模型 + 地面网格 + 阴影
+  4. 右上 `lil-gui` 控制面板（Controls / States / Emotions / Expressions）可交互，
+     切换 `state`、点击 `Jump` 等按钮模型有响应
+  5. 左上 FPS 指示器显示约 60（真机实测 `59-61`）
+  6. 全程无 `did-fail-load`，不出现第二个系统窗口
+- **对应需求**：FR-001-030
+- **执行状态**：✅ 通过（2026-10-20，两轮均通过；新包名轮证据 `w5.jpeg` 列表页、`w9.jpeg` 示例页
+  含 `FPS 59-61`）
+- **备注**：示例顺序以 3120×2080 全屏下左侧栏可见顺序为准；若站点改版导致顺序变化，
+  按「第 5 个可见示例」执行，并在测试报告中记录实际示例名
 
 ### TC-001-033（P1）`target="_blank"` 收敛到当前窗口
 
@@ -213,10 +243,17 @@
 
 ## 执行汇总（2026-10-20）
 
-| 结果 | 用例 |
-|------|------|
-| 通过 | TC-001-001、TC-001-002、TC-001-010、TC-001-011、TC-001-012、TC-001-020、TC-001-021、TC-001-022（百度）、TC-001-023、TC-001-030、TC-001-031、TC-001-032、TC-001-040、TC-001-041、TC-001-042、TC-001-060 |
-| 未执行 | TC-001-024、TC-001-033、TC-001-034、TC-001-050~053 |
-| 阻塞 | 无（原阻塞项 TC-001-032 已补测通过） |
+执行轮次：
+- **第 1 轮**：包名 `com.jkh.electronshell`（首版）
+- **第 2 轮**：包名 `org.fellow99.ElectronShell`（包名迁移 + 权限 28→22 后回归）
 
-详见 `logs/20261020-1/TEST_REPORT.md`。
+| 结果 | 用例 | 说明 |
+|------|------|------|
+| 通过（两轮） | TC-001-001、TC-001-010、TC-001-011、TC-001-020、TC-001-021、TC-001-030（百度→新闻）、TC-001-031（threejs 首页）、TC-001-032（examples→第 5 个示例）、TC-001-040、TC-001-060 | 主链路在新旧包名下均稳定 |
+| 通过（第 1 轮） | TC-001-002、TC-001-012、TC-001-022、TC-001-023、TC-001-042 | 第 2 轮未重复执行，代码路径未变更 |
+| 通过（第 2 轮） | TC-001-041（重启恢复 URL） | 新包名数据目录下已验证 |
+| 未执行 | TC-001-024（软键盘 Go）、TC-001-033（`target=_blank`）、TC-001-034（`mailto:`）、TC-001-050~053（响应式/横竖屏） | 需特定页面、键盘交互或多种设备形态 |
+| 不具备条件 | 网页内粘贴 | 已按需求移除 `READ_PASTEBOARD`，预期不可用（见 `plan.md` §8.1） |
+| 阻塞 | 无 | — |
+
+> 截图与 hilog 证据见 `logs/20261020-1/TEST_REPORT.md`（第 1 轮为 `s*.jpeg`/`t*.jpeg`，第 2 轮为 `w*.jpeg`/`x*.jpeg`）。

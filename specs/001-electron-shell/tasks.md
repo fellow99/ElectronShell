@@ -67,7 +67,7 @@
 | T-404 | 代码评审（requesting-code-review → receiving-code-review），Critical 2 / Important 12 / Minor 13 逐条核对并修复 | [x] | `logs/20261020-1/REVIEW_REPORT.md` |
 | T-405 | 全工程规范文档（README / SPECS_CHECKLIST / STRUCTURE / TECH / ARCHITECTURE / constitution / overall-*） | [x] | `specs/` 目录 |
 | T-406 | 工程 `README.md` | [x] | 人工核对 |
-| T-407 | 真机测试报告 | [x] | `logs/20261020-1/TEST_REPORT.md`（21 条用例，全部 P0 通过；threejs examples 已补测） |
+| T-407 | 真机测试报告 | [x] | `logs/20261020-1/TEST_REPORT.md`（25 条用例，全部 P0 通过；threejs examples→第 5 个示例 已验证） |
 
 ## 里程碑
 

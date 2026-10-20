@@ -55,7 +55,7 @@
 | 功能规格 | [001-electron-shell/spec.md](./001-electron-shell/spec.md) | 5 个用户故事、24 条功能需求（FR-001-xxx）、7 个验收场景、依赖与约束 |
 | 技术方案 | [001-electron-shell/plan.md](./001-electron-shell/plan.md) | 5 个关键决策（承载组件/通信通道/内置应用/沉浸式/URL 校验）、数据模型、接口契约、文件清单 |
 | 任务清单 | [001-electron-shell/tasks.md](./001-electron-shell/tasks.md) | 4 个阶段 34 个任务、3 个真机阶段缺陷、5 个里程碑 |
-| 测试用例 | [001-electron-shell/test-cases.md](./001-electron-shell/test-cases.md) | 21 条用例（P0×9、P1×9、P2×3），含执行状态与证据 |
+| 测试用例 | [001-electron-shell/test-cases.md](./001-electron-shell/test-cases.md) | 25 条用例（P0×11、P1×10、P2×4），含执行状态与证据 |
 
 ---
 
@@ -65,7 +65,7 @@
 |------|------|------|
 | 开发日志与自查清单 | [../logs/20261020-1/DEV_CHECKLIST.md](../logs/20261020-1/DEV_CHECKLIST.md) | 环境、13 项实现自查、编译警告归因 |
 | 代码评审报告 | [../logs/20261020-1/REVIEW_REPORT.md](../logs/20261020-1/REVIEW_REPORT.md) | `requesting-code-review` 派发的评审结论 + `receiving-code-review` 的逐条核对与处置 |
-| 测试清单与报告 | [../logs/20261020-1/TEST_REPORT.md](../logs/20261020-1/TEST_REPORT.md) | 21 条用例执行、补测记录、缺陷清单、评审后回归验证 |
+| 测试清单与报告 | [../logs/20261020-1/TEST_REPORT.md](../logs/20261020-1/TEST_REPORT.md) | 25 条用例执行、补测记录、缺陷清单、评审后回归验证 |
 
 ---
 
