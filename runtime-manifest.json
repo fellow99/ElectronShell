@@ -1,0 +1,57 @@
+{
+  "shellVersion": "rc.7-fellow99.baseline.1",
+  "binaryVersion": "v37.2.3-20260825.1",
+  "genericBundleName": "com.huawei.ohos_electron",
+  "so": [
+    {
+      "path": "electron/libs/arm64-v8a/libelectron.so",
+      "md5": "D97D27B98220C28858EE9486E5048510"
+    },
+    {
+      "path": "electron/libs/arm64-v8a/libadapter.so",
+      "md5": "A8FD1ABFBAC39A31DB1F8D16745576E3"
+    },
+    {
+      "path": "electron/libs/arm64-v8a/libffmpeg.so",
+      "md5": "E7D2B9808F62EA8421A86789DD818A49"
+    }
+  ],
+  "shellMarkers": [
+    {
+      "symbol": "kTitleBarHeightVP",
+      "file": "web_engine/src/main/ets/common/Constants.ets"
+    },
+    {
+      "symbol": "setWindowDecorHeight",
+      "file": "web_engine/src/main/ets/common/Constants.ets"
+    },
+    {
+      "symbol": "idNormalization",
+      "file": "web_engine/src/main/ets/common/WindowStyle.ets"
+    },
+    {
+      "symbol": "WebNodeHandleWindow",
+      "file": "web_engine/Index.ets"
+    }
+  ],
+  "barrelFile": "web_engine/Index.ets",
+  "barrelExports": [
+    "WebNodeHandleWindow",
+    "WebNodeHandleSubWindow"
+  ],
+  "bundleNameRewrite": {
+    "from": "com.huawei.ohos_electron",
+    "adapters": [
+      "web_engine/src/main/ets/adapter/AppWindowAdapter.ets",
+      "web_engine/src/main/ets/adapter/ElectronAppAdapter.ets",
+      "web_engine/src/main/ets/adapter/PermissionManagerAdapter.ets",
+      "web_engine/src/main/ets/adapter/PopupWindowAdapter.ets"
+    ],
+    "expectedHitsPerFile": 1
+  },
+  "libcxx": {
+    "path": "electron/libs/arm64-v8a/libc++_shared.so",
+    "md5": "9D734AD288D856F9658FB9A2DB582AA3",
+    "source": "DevEco SDK"
+  }
+}
