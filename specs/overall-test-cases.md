@@ -66,13 +66,13 @@
 |----|----|
 | 设备 | `HAD-W32`（2in1，API 26，3120×2080），序列号 `3QC0226526001227` |
 | 安装 | `hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap` |
-| 启动 | `hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell` |
-| 停止 | `hdc shell aa force-stop org.fellow99.ElectronShell` |
+| 启动 | `hdc shell aa start -a EntryAbility -b org.fellow99.test.ElectronShell` |
+| 停止 | `hdc shell aa force-stop org.fellow99.test.ElectronShell` |
 | 抓屏 | `hdc shell snapshot_display -f /data/local/tmp/s.jpeg` + `hdc file recv` |
-| 布局 | `hdc shell "uitest dumpLayout -b org.fellow99.ElectronShell -p /data/local/tmp/l.json"` |
+| 布局 | `hdc shell "uitest dumpLayout -b org.fellow99.test.ElectronShell -p /data/local/tmp/l.json"` |
 | 输入 | `hdc shell "uitest uiInput click <x> <y>"` / `uitest uiInput text <text>` / `uitest uiInput keyEvent 2055`（删除） |
 | 日志 | `hdc shell hilog -x`（注意本机 hilog 不支持 `-x -z` 组合） |
-| 应用数据 | `hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json` |
+| 应用数据 | `hdc shell cat /data/app/el2/100/base/org.fellow99.test.ElectronShell/files/electron-shell-state.json` |
 
 ---
 

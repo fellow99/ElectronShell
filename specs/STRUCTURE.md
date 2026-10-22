@@ -10,7 +10,7 @@
 ```
 ElectronShell/
 ├── AppScope/                       # 应用级配置与资源（bundleName / 图标 / 名称）
-│   ├── app.json5                   # bundleName=org.fellow99.ElectronShell, versionName=1.0.0
+│   ├── app.json5                   # bundleName=org.fellow99.test.ElectronShell, versionName=1.0.0
 │   └── resources/base/
 │       ├── element/string.json      # app_name = ElectronShell
 │       ├── media/                  # ★ 应用图标 app_icon.png（1024×1024 RGBA，被 app.json5 的 icon 引用）

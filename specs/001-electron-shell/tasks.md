@@ -11,7 +11,7 @@
 | T-001 | 从 `harmonypc-electron/ohos_hap` 装配工程骨架（AppScope / electron / web_engine / hvigor） | [x] | 目录比对 |
 | T-002 | 依据 `harmonypc-electron-versions/libelectron/ohos_hap` 校准 v37 配置（compatibleSdkVersion 6.0.0(20)、targetSdkVersion 6.1.1(24)、runtimeOS HarmonyOS） | [x] | 对照 diff |
 | T-003 | 校验内核二进制 MD5 与 `runtime-manifest.json` 一致 | [x] | `scripts/assemble-resources.sh` |
-| T-004 | 改写 bundleName（`org.fellow99.ElectronShell`）至 `AppScope/app.json5`、4 个 adapter、`shortcuts_config.json` | [x] | `grep` 无残留 |
+| T-004 | 改写 bundleName（`org.fellow99.test.ElectronShell`）至 `AppScope/app.json5`、4 个 adapter、`shortcuts_config.json` | [x] | `grep` 无残留 |
 | T-005 | deviceTypes 覆盖 `default/tablet/2in1/tv`；补 `DISTRIBUTED_DATASYNC` 的 `reason`/`usedScene` | [x] | `assembleHap` 无配置错误 |
 | T-006 | 建立签名与构建流水线（`signing/gen-signing.sh`、`scripts/build.sh`） | [x] | 产出 `electron-default-signed.hap` |
 | T-007 | 由 DevEco 自动签名生成华为 AGC profile 并接入 `signingConfigs` | [x] | 真机安装成功 |

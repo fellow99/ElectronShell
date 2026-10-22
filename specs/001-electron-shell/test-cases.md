@@ -115,8 +115,8 @@
      `did-finish-load url=https://news.baidu.com/`
   3. 全程**不出现第二个系统窗口**；浮动按钮仍可用；页面可滚动、可点击
 - **对应需求**：FR-001-030
-- **执行状态**：✅ 通过（`com.jkh.electronshell` 与 `org.fellow99.ElectronShell` 两轮均通过；
-  证据 `w2.jpeg` 百度首页、`w3.jpeg` 百度新闻）
+- **执行状态**：✅ 通过（第 1、2 轮：`com.jkh.electronshell`、`org.fellow99.ElectronShell` 均通过；
+  第 3 轮 `org.fellow99.test.ElectronShell` 待签名后回归。第 2 轮证据 `w2.jpeg` 百度首页、`w3.jpeg` 百度新闻）
 
 ### TC-001-031（P1）测试站点 2：threejs.org 首页加载
 
@@ -149,8 +149,8 @@
   5. 左上 FPS 指示器显示约 60（真机实测 `59-61`）
   6. 全程无 `did-fail-load`，不出现第二个系统窗口
 - **对应需求**：FR-001-030
-- **执行状态**：✅ 通过（2026-10-20，两轮均通过；新包名轮证据 `w5.jpeg` 列表页、`w9.jpeg` 示例页
-  含 `FPS 59-61`）
+- **执行状态**：✅ 通过（2026-10-20，第 1、2 轮均通过；第 2 轮证据 `w5.jpeg` 列表页、`w9.jpeg` 示例页
+  含 `FPS 59-61`）；第 3 轮待签名后回归
 - **备注**：示例顺序以 3120×2080 全屏下左侧栏可见顺序为准；若站点改版导致顺序变化，
   按「第 5 个可见示例」执行，并在测试报告中记录实际示例名
 
@@ -180,21 +180,21 @@
 ### TC-001-040（P0）确认的 URL 写入本地存储
 
 - **步骤**：确认 `https://www.threejs.org` 后执行
-  `hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/haps/electron/preferences/electron_shell_store`
+  `hdc shell cat /data/app/el2/100/base/org.fellow99.test.ElectronShell/haps/electron/preferences/electron_shell_store`
 - **预期**：文件内容包含 `<string key="last_url">https://www.threejs.org</string>`
 - **对应需求**：FR-001-040
 - **实测**：通过
 
 ### TC-001-041（P0）重启后恢复该 URL
 
-- **步骤**：`hdc shell aa force-stop org.fellow99.ElectronShell` → `aa start -a EntryAbility -b org.fellow99.ElectronShell`
+- **步骤**：`hdc shell aa force-stop org.fellow99.test.ElectronShell` → `aa start -a EntryAbility -b org.fellow99.test.ElectronShell`
 - **预期**：启动后直接加载 `https://www.threejs.org`，面板收起
 - **对应需求**：FR-001-011 / FR-001-040
 
 ### TC-001-042（P1）状态文件与偏好存储双写一致
 
 - **步骤**：确认 URL 后执行
-  `hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json`
+  `hdc shell cat /data/app/el2/100/base/org.fellow99.test.ElectronShell/files/electron-shell-state.json`
 - **预期**：内容形如 `{"url":"https://www.threejs.org","seq":N}`，`url` 与 preferences 中一致
 - **对应需求**：FR-001-025 / FR-001-040
 - **实测**：通过
@@ -246,14 +246,16 @@
 执行轮次：
 - **第 1 轮**：包名 `com.jkh.electronshell`（首版）
 - **第 2 轮**：包名 `org.fellow99.ElectronShell`（包名迁移 + 权限 28→22 后回归）
+- **第 3 轮**：包名 `org.fellow99.test.ElectronShell`（包名二次迁移；待 DevEco 重新自动签名后回归）
 
 | 结果 | 用例 | 说明 |
 |------|------|------|
 | 通过（两轮） | TC-001-001、TC-001-010、TC-001-011、TC-001-020、TC-001-021、TC-001-030（百度→新闻）、TC-001-031（threejs 首页）、TC-001-032（examples→第 5 个示例）、TC-001-040、TC-001-060 | 主链路在新旧包名下均稳定 |
 | 通过（第 1 轮） | TC-001-002、TC-001-012、TC-001-022、TC-001-023、TC-001-042 | 第 2 轮未重复执行，代码路径未变更 |
-| 通过（第 2 轮） | TC-001-041（重启恢复 URL） | 新包名数据目录下已验证 |
+| 通过（第 2 轮） | TC-001-041（重启恢复 URL） | 第 2 轮包名数据目录下已验证 |
 | 未执行 | TC-001-024（软键盘 Go）、TC-001-033（`target=_blank`）、TC-001-034（`mailto:`）、TC-001-050~053（响应式/横竖屏） | 需特定页面、键盘交互或多种设备形态 |
 | 不具备条件 | 网页内粘贴 | 已按需求移除 `READ_PASTEBOARD`，预期不可用（见 `plan.md` §8.1） |
 | 阻塞 | 无 | — |
 
-> 截图与 hilog 证据见 `logs/20261020-1/TEST_REPORT.md`（第 1 轮为 `s*.jpeg`/`t*.jpeg`，第 2 轮为 `w*.jpeg`/`x*.jpeg`）。
+> 证据为本地留存的执行截图（第 1 轮 `s*.jpeg`/`t*.jpeg`，第 2 轮 `w*.jpeg`/`x*.jpeg`）；`logs/` 目录已在
+> `.gitignore` 中排除，不入库。

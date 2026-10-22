@@ -17,7 +17,7 @@
 | 启动 | `aa start` 返回成功，1 秒内进程消失 |
 | 崩溃类型 | ArkTS 崩溃（已修）→ 原生 `SIGSEGV`（无法修） |
 
-原生崩溃特征（`/data/log/faultlog/faultlogger/cppcrash-org.fellow99.ElectronShell-*.log`）：
+原生崩溃特征（`/data/log/faultlog/faultlogger/cppcrash-org.fellow99.test.ElectronShell-*.log`）：
 
 ```text
 Reason:Signal:SIGSEGV(SEGV_MAPERR)@000000000000000000  probably caused by NULL pointer dereference
@@ -133,7 +133,7 @@ hdc -t <serial> shell "grep -o 'SystemCapability.Window[A-Za-z.]*' /system/etc/s
 hdc -t <serial> shell "param get const.ohos.fullname; param get const.ohos.apiversion"
 
 # 启动并抓关键日志
-hdc -t <serial> shell "aa start -a EntryAbility -b org.fellow99.ElectronShell"
+hdc -t <serial> shell "aa start -a EntryAbility -b org.fellow99.test.ElectronShell"
 hdc -t <serial> shell "hilog -x | grep -E 'setDefaultBounds|OhosScreen|code.:801' | tail -20"
 
 # 崩溃日志

@@ -118,7 +118,7 @@ bash scripts/build.sh          # 产出 electron-default-signed.hap
 
 ```bash
 hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap
-hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
+hdc shell aa start -a EntryAbility -b org.fellow99.test.ElectronShell
 ```
 
 首次在 DevEco Studio 中打开工程时，建议执行一次自动签名：
@@ -147,7 +147,7 @@ hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
 
 ```
 ElectronShell/
-├── AppScope/                 # 应用级配置（bundleName=org.fellow99.ElectronShell）
+├── AppScope/                 # 应用级配置（bundleName=org.fellow99.test.ElectronShell）
 │   └── resources/base/media/app_icon.png   # ★ 应用图标（1024×1024 PNG）
 ├── electron/                 # 主 entry HAP：应用入口、页面、壳界面、持久化、内核通道
 │   └── src/main/ets/
@@ -180,15 +180,15 @@ ElectronShell/
 ```bash
 # 安装 / 启动 / 停止
 hdc app install -r electron/build/default/outputs/default/electron-default-signed.hap
-hdc shell aa start -a EntryAbility -b org.fellow99.ElectronShell
-hdc shell aa force-stop org.fellow99.ElectronShell
+hdc shell aa start -a EntryAbility -b org.fellow99.test.ElectronShell
+hdc shell aa force-stop org.fellow99.test.ElectronShell
 
 # 截图
 hdc shell snapshot_display -f /data/local/tmp/s.jpeg
 MSYS_NO_PATHCONV=1 hdc file recv /data/local/tmp/s.jpeg ./s.jpeg
 
 # UI 树 / 点击 / 输入
-hdc shell "uitest dumpLayout -b org.fellow99.ElectronShell -p /data/local/tmp/l.json"
+hdc shell "uitest dumpLayout -b org.fellow99.test.ElectronShell -p /data/local/tmp/l.json"
 hdc shell "uitest uiInput click <x> <y>"
 hdc shell "uitest uiInput text https://www.baidu.com"
 hdc shell "uitest uiInput keyEvent 2055"     # 删除一个字符
@@ -197,8 +197,8 @@ hdc shell "uitest uiInput keyEvent 2055"     # 删除一个字符
 hdc shell hilog -x | grep -E "ElectronShellBridge|ShellOverlay|ElectronShell\]"
 
 # 查看持久化数据
-hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/files/electron-shell-state.json
-hdc shell cat /data/app/el2/100/base/org.fellow99.ElectronShell/haps/electron/preferences/electron_shell_store
+hdc shell cat /data/app/el2/100/base/org.fellow99.test.ElectronShell/files/electron-shell-state.json
+hdc shell cat /data/app/el2/100/base/org.fellow99.test.ElectronShell/haps/electron/preferences/electron_shell_store
 ```
 
 ### 验证清单（人工）
